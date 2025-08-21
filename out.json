@@ -1,0 +1,1 @@
+{"statusCode":500,"body":"{\"ok\":false,\"message\":\"400 Invalid schema for response_format 'ScholarshipSet': schema must be a JSON Schema of 'type: \\\"object\\\"', got 'type: \\\"None\\\"'.\"}"}

@@ -1,0 +1,20 @@
+{
+  "name": "serverless",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "zip:scholarships": "mkdir -p dist && zip -r dist/scholarships.zip lambdas/scholarships/index.mjs lambdas/_shared node_modules package.json schemas/* systems/*"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.46.0",
+    "axios": "^1.11.0",
+    "cheerio": "^1.1.2",
+    "jsdom": "^26.1.0",
+    "openai": "^4.57.0",
+    "playwright": "^1.55.0",
+    "playwright-aws-lambda": "^0.11.0",
+    "playwright-core": "^1.55.0",
+    "zod": "^3.23.8"
+  }
+}
