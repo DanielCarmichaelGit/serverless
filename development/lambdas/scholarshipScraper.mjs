@@ -2,4 +2,4 @@ import scrapeScholarships from "../../utils/orchestrations/scholarshipScraper.mj
 
 const res = await scrapeScholarships(100, "bold", true);
 
-console.log(res);
+console.log("THIS IS THE END RESULT", res.length);

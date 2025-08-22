@@ -47,7 +47,7 @@ export async function extractor(page) {
       container.querySelectorAll("div.text-text.break-words.text-lg p")
     )
       .map((el) => el?.textContent.trim())
-      .join("\n\n");
+      .join("");
     const selectionCriteria = safeText(
       "div.mt-5.flex.flex-col.flex-wrap.pt-5 > div.text-text"
     );
@@ -60,7 +60,7 @@ export async function extractor(page) {
         ?.textContent.trim();
       wordCount = essayTopicContainer.querySelector(
         ".text-center.text-sm.text-gray-600"
-      );
+      )?.textContent.trim();
     }
     const winningApplication = document
       .querySelector(

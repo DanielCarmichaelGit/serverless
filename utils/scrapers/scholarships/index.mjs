@@ -13,22 +13,29 @@ const paramMap = {
   bold: {
     extractor: boldExtractor,
     url: "https://bold.org/scholarships/",
-    paginationSelector: 'a.button.button-medium.button-primary[class*="Pagination_button"]',
+    primaryPaginationSelector: 'a.button.button-medium.button-primary[class*="Pagination_button"]',
+    secondaryPaginationSelector: 'div[class*="Pagination_container"] a.button.button-primary.button-medium',
+    paginationType: "standard"
   },
   threeSixty: {
     extractor: threeSixtyExtractor,
     url: "https://www.360scholarships.com/search/result/page:1",
-    paginationSelector: 'a.button.button-medium.button-primary[class*="Pagination_button"]',
+    primaryPaginationSelector: 'a.button.button-medium.button-primary[class*="Pagination_button"]',
+    secondaryPaginationSelector: 'a.button.button-medium.button-primary[class*="Pagination_button"]',
+    paginationType: "standard"
   },
   collegeboard: {
     extractor: collegeboardExtractor,
-    url: "https://scholars.collegeboard.org/scholarships",
-    paginationSelector: 'a.button.button-medium.button-primary[class*="Pagination_button"]',
+    url: "https://bigfuture.collegeboard.org/scholarship-search",
+    primaryPaginationSelector: 'button[data-testid="bf-scholarship-search-show-more"]',
+    secondaryPaginationSelector: 'button[data-testid="bf-scholarship-search-show-more"]',
+    paginationType: "showMore",
+    resultsPerPage: 15
   },
 };
 
 export async function scrapeScholarshipsPaginated(count, site) {
-  const { extractor, url, paginationSelector } = paramMap[site];
+  const { extractor, url, primaryPaginationSelector, secondaryPaginationSelector } = paramMap[site];
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
@@ -39,8 +46,10 @@ export async function scrapeScholarshipsPaginated(count, site) {
   await page.waitForSelector("main"); // anchor on a known container
 
   let results = [];
+  let currentPage = 0;
 
   while (results.length < count) {
+    let localPageSelector = currentPage === 0 ? primaryPaginationSelector : secondaryPaginationSelector;
     // Scrape current page
     const pageResults = await extractor(page);
     results.push(...pageResults);
@@ -49,12 +58,13 @@ export async function scrapeScholarshipsPaginated(count, site) {
 
     // Try clicking the "Next" button
     const nextButton = await page.$(
-      paginationSelector
+      localPageSelector
     );
     if (!nextButton) break; // no more pages
 
     await nextButton.click();
     await page.waitForLoadState("domcontentloaded");
+    currentPage++;
   }
 
   await browser.close();
