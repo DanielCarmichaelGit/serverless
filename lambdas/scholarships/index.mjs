@@ -1,6 +1,4 @@
-import { openai, MODEL } from "../_shared/openai-client.mjs";
-import { zodTextFormat } from "openai/helpers/zod";
-import { supabase } from "../_shared/supabase-client.mjs";
+import { openai, MODEL } from "../../clients/openai/index.mjs";
 
 // openai resources
 import { scholarshipSchema } from "../../schemas/scholarshipSchema.mjs";
@@ -10,7 +8,6 @@ import { system } from "../../systems/scholarships/normalizer.mjs";
 export const handler = async (event) => {
   try {
     const payload = JSON.parse(event.body);
-    console.log(payload);
   } catch (e) {
     console.error(e);
     return {
@@ -31,7 +28,7 @@ const resp = await openai.responses.create({
           type: "input_text",
           text: `Normalize to the JSON schema below.
   Rules:
-  - Map any stated minimum GPA to gpa_min_bucket: none | 2_5 | 3_0 | 3_5 | 3_8 | 4_0.
+  - Map any stated minimum GPA to gpa_min_bucket: none | 2_0 | 2_25 | 2_5 | 2_75 | 3_0 | 3_25 | 3_5 | 3_75 | 4_0.
   - If a deadline is parsed, also add its numeric month to filters.deadline_month.
   - Set source_name to "${sourceName ?? ""}" when appropriate.
   - Do NOT guess; if not present, use null or omit.

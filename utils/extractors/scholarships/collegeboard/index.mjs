@@ -1,85 +1,86 @@
 /**
  * Extract scholarships from the current page (shared by both functions).
  */
+
 export async function extractor(page) {
   return await page.evaluate(() => {
     const results = [];
 
-    const mainScholarships = document.querySelectorAll(
-      "body > div.relative.flex.min-h-screen.flex-col > main > div > div.bg-gray-50.pb-10 > div > div > div > div.relative:not([data-testid*='scholarship'])"
+    // Try multiple possible selectors for the container
+    const container = document.querySelector(
+      '[class*="ResultsSectionstyles__ResultsCardGrid"]'
     );
 
-    const sponsoredScholarships = document.querySelectorAll(
-      "body > div.relative.flex.min-h-screen.flex-col > main > div > div.bg-gray-50.pb-10 > div > div > div > div.relative[data-testid*='scholarship']"
+    if (!container) {
+      return results;
+    }
+
+    // Try multiple possible selectors for scholarship cards
+    let scholarships = container.querySelectorAll(
+      '[class^="SearchResultCardstyles__StyledCardContainer-scholarship-search-ui"]'
     );
 
-    const extract = (el, selectors) =>
-      selectors.map((s) => el.querySelector(s)?.textContent.trim() || null);
+    if (!scholarships) {
+      return results;
+    }
 
-    mainScholarships.forEach((el) => {
-      const [
-        title,
-        description,
-        sponsor,
-        deadline,
-        awardCount,
-        amount,
-        gradeLevel,
-      ] = extract(el, [
-        "div > div > a > div.relative.flex.flex-wrap > div.flex.flex-1.flex-col.self-center > p",
-        "div > div > a > div.relative.flex.flex-wrap > div.flex.flex-1.flex-col.self-center > div > div.border-t.border-t-gray-200.pt-5.text-sm.leading-tight.opacity-50",
-        "div > div > a > div.relative.flex.flex-wrap > div.flex.flex-1.flex-col.self-center > div > div.no-underline.text-inherit > div > div.text-text.flex.items-center.text-sm.leading-none",
-        "div > div > a > div.mt-7.flex.flex-wrap.justify-between > div:nth-child(4) > div.flex.items-center > div.text-text.text-center.font-semibold",
-        "div > div > a > div.mt-7.flex.flex-wrap.justify-between > div:nth-child(3) > div.flex.items-center > div.text-text.text-center.font-semibold",
-        "div > div > a > div.mt-7.flex.flex-wrap.justify-between > div:nth-child(2) > div.flex.items-center > div.text-text.text-center.font-semibold",
-        "div > div > a > div.mt-7.flex.flex-wrap.justify-between > div:nth-child(1) > div.flex.items-center > div.text-text.text-center.font-semibold",
-      ]);
+    const extractDetails = (detailContainer) => {
+      const refinedDetails = {};
 
-      let link = el.querySelector("div > div > div > a")?.href || null;
-      if (link?.startsWith("/")) link = "https://bold.org" + link;
+      if (!detailContainer) return refinedDetails;
 
-      results.push({
-        title,
-        sponsor,
-        deadline,
-        awardCount,
-        amount,
-        link,
-        gradeLevel,
-        description,
-      });
-    });
+      const detailsList = detailContainer.querySelectorAll(".details");
 
-    sponsoredScholarships.forEach((el) => {
-      const leftEl = el.querySelector("div > div > a");
-      const title =
-        leftEl
-          ?.querySelector("p.text-lg.font-semibold.leading-6.text-inherit")
-          ?.textContent.trim() || null;
+      for (const detail of detailsList) {
+        const key = detail.querySelector(".detailitem")?.textContent.trim();
+        const value = detail.querySelector(".detailvalue")?.textContent.trim();
 
-      const [description, sponsor, deadline, awardCount, amount, gradeLevel] =
-        extract(el, [
-          "div.mt-5.text-sm.leading-5.opacity-50",
-          "div.text-text.flex.items-center.text-sm.leading-none",
-          "div > div > a > div.mt-7.flex.flex-wrap.justify-between > div:nth-child(4) > div.flex.items-center > div.text-text.text-center.font-semibold",
-          "div > div > a > div.mt-7.flex.flex-wrap.justify-between > div:nth-child(3) > div.flex.items-center > div.text-text.text-center.font-semibold",
-          "div > div > a > div.mt-7.flex.flex-wrap.justify-between > div:nth-child(2) > div.flex.items-center > div.text-text.text-center.font-semibold",
-          "div > div > a > div.mt-7.flex.flex-wrap.justify-between > div:nth-child(1) > div.flex.items-center > div.text-text.text-center.font-semibold",
-        ]);
+        if (key && value) {
+          refinedDetails[key] = value;
+        }
+      }
 
-      let link = el.querySelector("div > div > div > a")?.href || null;
-      if (link?.startsWith("/")) link = "https://bold.org" + link;
+      return refinedDetails;
+    };
 
-      results.push({
-        title,
-        sponsor,
-        deadline,
-        awardCount,
-        amount,
-        link,
-        gradeLevel,
-        description,
-      });
+    scholarships.forEach((el, index) => {
+      try {
+        const secondaryContainer = el.querySelector(".secondarycontainer");
+
+        const title = secondaryContainer
+          .querySelector("h3.title")
+          ?.textContent.trim();
+        const openDate = secondaryContainer
+          .querySelector(".dates > .opens > span.datevalue")
+          ?.textContent.trim();
+        const deadline = secondaryContainer
+          .querySelector(".dates > .closes > span.datevalue")
+          ?.textContent.trim();
+        const amount = el
+          .querySelector("span.card-container-amount.cb-unbounded")
+          ?.textContent.trim();
+        const link = el.querySelector("a")?.href || null;
+        const detailContainer =
+          secondaryContainer.querySelector(".detailsList");
+        const details = extractDetails(detailContainer);
+
+        if (title) {
+          // Only add if we have at least a title
+          results.push({
+            title,
+            openDate,
+            deadline,
+            amount,
+            link,
+            ...(details || {}),
+          });
+        }
+      } catch (error) {
+        console.log(`Error processing scholarship ${index}:`, error.message);
+      }
+
+      // Remove the element from the DOM to free up memory
+      el.remove();
     });
 
     return results;

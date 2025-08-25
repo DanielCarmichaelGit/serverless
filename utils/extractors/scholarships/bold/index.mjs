@@ -1,6 +1,7 @@
 /**
  * Extract scholarships from the current page (shared by both functions).
  */
+
 export async function extractor(page) {
   return await page.evaluate(() => {
     let results = [];
@@ -45,7 +46,7 @@ export async function extractor(page) {
         awardCount,
         amount,
         link,
-        gradeLevel,
+        educationLevel: gradeLevel,
         description,
       });
     });
@@ -77,7 +78,7 @@ export async function extractor(page) {
         awardCount,
         amount,
         link,
-        gradeLevel,
+        educationLevel: gradeLevel,
         description,
       });
     });

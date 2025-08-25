@@ -1,6 +1,5 @@
 export async function extractor(page) {
   return await page.evaluate(() => {
-    console.log("extracting bold deep");
     // primary content
     const container = document.querySelector(
       "body > div.relative.flex.min-h-screen.flex-col > main > div > div > div:nth-child(1) > div > div:nth-child(1) > div.flex.flex-col.px-0 > div.px-5 > div:nth-child(3)"
@@ -49,7 +48,7 @@ export async function extractor(page) {
       .map((el) => el?.textContent.trim())
       .join("");
     const selectionCriteria = safeText(
-      "div.mt-5.flex.flex-col.flex-wrap.pt-5 > div.text-text"
+      "div.mt-5.flex.flex-col.flex-wrap.pt-5 > div.text-text:last-of-type"
     );
     let essayTopic = null;
     let wordCount = null;
@@ -66,7 +65,7 @@ export async function extractor(page) {
       .querySelector(
         "#winning-application > div:nth-child(2) > div:nth-child(2)"
       )
-      ?.textContent.trim();
+      ?.textContent.trim() || null;
 
     // secondary content
     const secondaryContainer = document.querySelector(
@@ -91,8 +90,6 @@ export async function extractor(page) {
       winningApplication,
       winnersAnnounced,
     };
-
-    console.log("extracted bold deep", data);
 
     return data;
   });

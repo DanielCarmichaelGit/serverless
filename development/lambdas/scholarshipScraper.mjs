@@ -1,5 +1,18 @@
-import scrapeScholarships from "../../utils/orchestrations/scholarshipScraper.mjs";
+import { scrape as topScrape } from "../../utils/orchestrations/index.mjs";
+import { scrape as deepScrape } from "../../utils/orchestrations/deep.mjs";
+import { Orchestrator } from "../../openai/scholarshipNormalizer.mjs";
 
-const res = await scrapeScholarships(100, "bold", true);
+// await Promise.all([
+//   topScrape(500, "collegeboard"),
+//   topScrape(500, "bold"),
+// ])
 
-console.log("THIS IS THE END RESULT", res.length);
+// await Promise.all([
+//   deepScrape("collegeboard"),
+//   deepScrape("bold"),
+// ])
+
+await Promise.all([
+  Orchestrator("collegeboard"),
+  // Orchestrator("bold"),
+])

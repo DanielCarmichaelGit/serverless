@@ -1,0 +1,3 @@
+https://collegescorecard.ed.gov/data/api-documentation/
+this might be able to be used to gather institution data then well need to map the schoalrship pages on the
+institution sites to the institution sites - maybe other info too? Who knows..

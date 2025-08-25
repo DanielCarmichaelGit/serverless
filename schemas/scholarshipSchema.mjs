@@ -24,25 +24,18 @@ const filtersSchema = z.object({
 });
 
 export const scholarshipSchema = z.object({
-  name: z.string(),
   link: z.string(),
-  host_site: z.string().nullable(),
-  source_name: z.string().nullable(),
-  external_id: z.string().nullable(),
-  currency: z.string().default("USD").nullable(),
-  amount_min: z.number().nullable(),
-  amount_max: z.number().nullable(),
-  deadline: z.string().nullable(),
-  rolling_deadline: z.boolean().nullable(),
-  application_open_date: z.string().nullable(),
   sponsor: z.string().nullable(),
   school: z.string().nullable(),
   school_specific: z.boolean().nullable(),
-  location_country: z.string().nullable(),
-  location_state: z.string().nullable(),
-  location_scope: z.enum(["national", "state", "local", "international"]).nullable(),
-  description: z.string().nullable(),
+  location: z.string().nullable(),
+  location_scope: z.enum(["national", "state", "city"]).nullable(),
   filters: filtersSchema,
   demographics: demographicsSchema,
-  tags: z.array(z.string()).nullable(),
+});
+
+export const scholarshipSchemaArray = z.array(scholarshipSchema);
+
+export const scholarshipArrayAsObject = z.object({
+  scholarships: scholarshipSchemaArray,
 });
