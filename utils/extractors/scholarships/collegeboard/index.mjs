@@ -67,11 +67,11 @@ export async function extractor(page) {
         if (title) {
           // Only add if we have at least a title
           results.push({
-            title,
-            openDate,
-            deadline,
-            amount,
+            name: title,
             link,
+            application_open_date: openDate,
+            application_close_date: deadline,
+            amount,
             ...(details || {}),
           });
         }

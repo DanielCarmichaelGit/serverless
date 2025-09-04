@@ -20,9 +20,10 @@ export async function scrapeBold(
   let results = [];
   let currentPage = 0;
   let keepGoing = true;
+  let countOfEmptyPages = 0;
 
   while (results.length < count && keepGoing) {
-    console.log("Current page", currentPage);
+    console.log("Current Bold page", currentPage);
     let localPageSelector =
       currentPage === 0
         ? primaryPaginationSelector
@@ -38,6 +39,15 @@ export async function scrapeBold(
     if (results.length >= count || !nextButton) {
       keepGoing = false;
       break;
+    }
+
+    if (pageResults.length === 0) {
+      countOfEmptyPages++;
+      if (countOfEmptyPages > 5) {
+        keepGoing = false;
+        break;
+      }
+      continue;
     }
 
     await randomDelay();

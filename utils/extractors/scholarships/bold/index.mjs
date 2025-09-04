@@ -40,14 +40,14 @@ export async function extractor(page) {
       if (link?.startsWith("/")) link = "https://bold.org" + link;
 
       results.push({
-        title,
-        sponsor,
-        deadline,
-        awardCount,
-        amount,
+        name: title,
         link,
-        educationLevel: gradeLevel,
+        sponsor,
         description,
+        application_close_date: deadline,
+        award_count: awardCount,
+        amount,
+        education_level: gradeLevel,
       });
     });
 
@@ -72,20 +72,20 @@ export async function extractor(page) {
       if (link?.startsWith("/")) link = "https://bold.org" + link;
 
       results.push({
-        title,
-        sponsor,
-        deadline,
-        awardCount,
-        amount,
+        name: title,
         link,
-        educationLevel: gradeLevel,
+        sponsor,
         description,
+        application_close_date: deadline,
+        award_count: awardCount,
+        amount,
+        education_level: gradeLevel,
       });
     });
 
     results = results.filter(scholarship => {
-      if (!scholarship.deadline) return false;
-      const deadlineDate = new Date(scholarship.deadline);
+      if (!scholarship.application_close_date) return false;
+      const deadlineDate = new Date(scholarship.application_close_date);
       const currentDate = new Date();
       return deadlineDate > currentDate;
     })

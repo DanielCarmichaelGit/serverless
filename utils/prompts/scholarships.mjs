@@ -1,4 +1,8 @@
-export const system = `
+import { encoding_for_model } from "tiktoken";
+
+const tokenizer = encoding_for_model("gpt-5-mini");
+
+const prompt = `
     You are an expert scholarship normalizer.
 
     Your job:
@@ -57,3 +61,9 @@ export const system = `
     - A valid JSON array matching the schema exactly, containing one object per scholarship.
     - Each object must adhere to schema types and rules above.
 `;
+
+const system = prompt.replace(/\s+/g, " ").trim();
+const promptTokens = tokenizer.encode(prompt);
+const tokens = tokenizer.encode(system);
+
+export { system };

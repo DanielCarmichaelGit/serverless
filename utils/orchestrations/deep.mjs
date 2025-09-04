@@ -80,7 +80,12 @@ export async function scrape(site) {
           const pageResults = await extractor(page);
           if (pageResults) {
             return { ...scholarship, ...pageResults };
+          } else {
+            return { ...scholarship }
           }
+        } catch (error) {
+          console.error("Error scraping deep page:", error);
+          return { ...scholarship }
         } finally {
           await page.close();
         }

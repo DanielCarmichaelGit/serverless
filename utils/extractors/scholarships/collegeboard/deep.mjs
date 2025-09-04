@@ -47,11 +47,13 @@ export async function extractor(page) {
       }
     }
 
-    return {
+    const data = {
       subheading,
       description,
       eligCriterias,
       furtherDetails,
     };
+
+    return data;
   });
 }
