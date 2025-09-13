@@ -7,12 +7,19 @@ import { Orchestrator } from "../../openai/scholarshipNormalizer.mjs";
 //   topScrape(2000, "bold"),
 // ])
 
-await Promise.all([
-  deepScrape("collegeboard"),
-  deepScrape("bold"),
-])
+// await Promise.all([
+//   deepScrape("collegeboard"),
+//   deepScrape("bold"),
+// ])
 
 // await Promise.all([
 //   Orchestrator("collegeboard"),
 //   Orchestrator("bold"),
 // ])
+
+
+const results = 1;
+
+if (results !== 1) {
+  console.log("true")
+}
